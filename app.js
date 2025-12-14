@@ -1,6 +1,6 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const cors = require('cors');
 const connectDB = require('./config/db');
 
 // Import routes
@@ -12,16 +12,18 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(bodyParser.json());
 
-// Route grouping
-app.use('/api', patientRoutes);
-app.use('/api', doctorRoutes);
-app.use('/api', appointmentRoutes);
+// ✅ REQUIRED MIDDLEWARE
+app.use(cors());            // allow requests from frontend (5173)
+app.use(express.json());    // parse JSON bodies
+
+// Routes
+app.use('/api/patients', patientRoutes);
+app.use('/api/doctors', doctorRoutes);
+app.use('/api/appointments', appointmentRoutes);
 
 // Test route
 app.get('/', (req, res) => res.send('Clinic API is running...'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
